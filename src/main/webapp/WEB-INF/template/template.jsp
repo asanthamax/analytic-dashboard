@@ -9,7 +9,6 @@
 	<meta name="description" content="Analytic dashboard for wso2 Identity server">
 	<meta name="author" content="asantha">
 	<meta name="keyword" content="Analytic,Dashboard,wso2,identity server,realtime,batch">
-	<link rel="shortcut icon" href="${pageContext.request.contextPath}/resources/img/favicon.png">
 
 	<title>Analytic Dashboard</title>
 
