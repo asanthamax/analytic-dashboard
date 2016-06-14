@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/data/mongo
+	http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
+	
+	
+	<mongo:mongo id="mongo" host="localhost" port="27017" />
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+    	<constructor-arg name="mongo" ref="mongo" />
+    	<constructor-arg name="databaseName" value="test"/>
+	</bean>
+	<bean id="employeeDao" class="thilina.spring.dao.ApplicantDaoImpl"/>
+	<aop:aspectj-autoproxy />
+	<bean id="loggingCheck" class="thilina.spring.aspects.LoginAspect"/>
+	<bean id="notificationCheck" class="thilina.spring.aspects.NotificationAspect"/>
+	<bean id="user" class="thilina.spring.service.UserSession" scope="session">     
+      <aop:scoped-proxy/>
+  	</bean>
+  	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.gmail.com" />
+        <property name="port" value="587" />
+        <property name="username" value="youremail" />
+        <property name="password" value="yourpassword" />
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.transport.protocol">smtp</prop>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+            </props>
+        </property>
+    </bean>
+</beans>
