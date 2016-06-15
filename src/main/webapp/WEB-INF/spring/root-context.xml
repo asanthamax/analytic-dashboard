@@ -11,18 +11,11 @@
 	
 	
 	
-	<mongo:mongo id="mongo" host="localhost" port="27017" />
+	<mongo:mongo id="mongo" host="localhost" port="27017"  />
+	<mongo:db-factory dbname="analytic_db" username="admin" password="admin123" mongo-ref="mongo"/>
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
-    	<constructor-arg name="mongo" ref="mongo" />
-    	<constructor-arg name="databaseName" value="test"/>
+        <constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
 	</bean>
-	<bean id="employeeDao" class="thilina.spring.dao.ApplicantDaoImpl"/>
-	<aop:aspectj-autoproxy />
-	<bean id="loggingCheck" class="thilina.spring.aspects.LoginAspect"/>
-	<bean id="notificationCheck" class="thilina.spring.aspects.NotificationAspect"/>
-	<bean id="user" class="thilina.spring.service.UserSession" scope="session">     
-      <aop:scoped-proxy/>
-  	</bean>
   	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="host" value="smtp.gmail.com" />
         <property name="port" value="587" />
