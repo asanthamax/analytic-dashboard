@@ -5,11 +5,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-public class CVUploadController {
+public class PerformanceController {
 
-	@RequestMapping(value="/uploadcv",method=RequestMethod.GET)
-	public String uploadCV()
+	@RequestMapping(value = "/performance", method = RequestMethod.GET)
+	public String profile()
 	{
-		return "uploadcv";
+		return "performance";
 	}
+	
+	
 }
