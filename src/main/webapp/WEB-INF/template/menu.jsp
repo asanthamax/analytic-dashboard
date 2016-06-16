@@ -56,6 +56,12 @@
 
 			</li>
 
+			<li>
+				<a class="" href="${home}/graphical">
+					<i class="icon_cloud"></i>
+					<span>Graphical Analytic</span>
+				</a>
+			</li>
 			<!-- <li class="sub-menu">
                 <a href="javascript:;" class="">
                     <i class="icon_table"></i>

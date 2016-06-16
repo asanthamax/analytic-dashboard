@@ -4,77 +4,94 @@ import org.json.JSONObject;
 import org.spring.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 
 /**
  * Created by asantha on 6/15/16.
  */
-@XmlRootElement(name = "service-data")
-public class Webservice {
 
-    private UsersService usersService = new UsersServiceImpl();
-    private ClaimsService claimsService = new ClaimsServiceImpl();
-    private DevicesService devicesService = new DevicesServiceImpl();
-    private FraudsService fraudsService = new FraudsServiceImpl();
-    private RolesService rolesService = new RolesServiceImpl();
+@WebService(endpointInterface = "org.spring.ws.IWebservice")
+@SOAPBinding(style = SOAPBinding.Style.DOCUMENT, use= SOAPBinding.Use.LITERAL)
+public class Webservice implements IWebservice{
 
-    @XmlAttribute(name = "service-adduser")
-    public boolean addUser(JSONObject users){
+    @Autowired
+    private UsersService usersService ;
+
+    @Autowired
+    private ClaimsService claimsService;
+
+    @Autowired
+    private DevicesService devicesService;
+
+    @Autowired
+    private FraudsService fraudsService;
+
+    @Autowired
+    private RolesService rolesService;
+
+    public Webservice(){
+
+    }
+
+    @Override
+    public boolean addUser(String[] users){
 
         return false;
     }
 
-    @XmlAttribute(name = "service-updateuser")
-    public boolean updateUser(JSONObject users){
+    @Override
+    public boolean updateUser(String[] users){
 
         return false;
     }
 
-    @XmlAttribute(name = "service-adddevice")
-    public boolean addDevice(JSONObject devices){
+    @Override
+    public boolean addDevice(String[] devices){
 
         return false;
     }
 
-    @XmlAttribute(name = "service-updatedevice")
-    public boolean updateDevice(JSONObject devices){
+    @Override
+    public boolean updateDevice(String[] devices){
 
         return false;
     }
 
-    @XmlAttribute(name = "service-addfrauds")
-    public boolean addFrauds(JSONObject frauds){
+    @Override
+    public boolean addFrauds(String[] frauds){
 
         return false;
     }
 
-    @XmlAttribute(name = "service-updatefrauds")
-    public boolean updateFrauds(JSONObject frauds){
+    @Override
+    public boolean updateFrauds(String[] frauds){
 
         return false;
     }
 
-    @XmlAttribute(name = "service-addroles")
-    public boolean addRoles(JSONObject roles){
+    @Override
+    public boolean addRoles(String[] roles){
 
         return false;
     }
 
-    @XmlAttribute(name = "service-updateroles")
-    public boolean updateRoles(JSONObject roles){
+    @Override
+    public boolean updateRoles(String[] roles){
 
         return false;
     }
 
-    @XmlAttribute(name = "service-addusers")
-    public boolean addUsers(JSONObject users){
+    @Override
+    public boolean addUsers(String[] users){
 
         return false;
     }
 
-    @XmlAttribute(name = "service-updateusers")
-    public boolean updateUsers(JSONObject users){
+    @Override
+    public boolean updateUsers(String[] users){
 
         return false;
     }
