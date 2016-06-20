@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="http://ws.spring.org/" xmlns:tns="http://ws.spring.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="WebserviceException" type="tns:WebserviceException"/>
+
+  <xs:element name="addDevice" type="tns:addDevice"/>
+
+  <xs:element name="addDeviceResponse" type="tns:addDeviceResponse"/>
+
+  <xs:element name="addFrauds" type="tns:addFrauds"/>
+
+  <xs:element name="addFraudsResponse" type="tns:addFraudsResponse"/>
+
+  <xs:element name="addRoles" type="tns:addRoles"/>
+
+  <xs:element name="addRolesResponse" type="tns:addRolesResponse"/>
+
+  <xs:element name="addUser" type="tns:addUser"/>
+
+  <xs:element name="addUserResponse" type="tns:addUserResponse"/>
+
+  <xs:element name="addUsers" type="tns:addUsers"/>
+
+  <xs:element name="addUsersResponse" type="tns:addUsersResponse"/>
+
+  <xs:element name="updateDevices" type="tns:updateDevices"/>
+
+  <xs:element name="updateDevicesResponse" type="tns:updateDevicesResponse"/>
+
+  <xs:element name="updateFrauds" type="tns:updateFrauds"/>
+
+  <xs:element name="updateFraudsResponse" type="tns:updateFraudsResponse"/>
+
+  <xs:element name="updateRoles" type="tns:updateRoles"/>
+
+  <xs:element name="updateRolesResponse" type="tns:updateRolesResponse"/>
+
+  <xs:element name="updateUser" type="tns:updateUser"/>
+
+  <xs:element name="updateUserResponse" type="tns:updateUserResponse"/>
+
+  <xs:complexType name="addFrauds">
+    <xs:sequence>
+      <xs:element name="frauds" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="addFraudsResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="WebserviceException">
+    <xs:sequence>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="updateFrauds">
+    <xs:sequence>
+      <xs:element name="frauds" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="updateFraudsResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="updateUser">
+    <xs:sequence>
+      <xs:element name="users" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="updateUserResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="addUsers">
+    <xs:sequence>
+      <xs:element name="users" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="addUsersResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="updateRoles">
+    <xs:sequence>
+      <xs:element name="roles" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="updateRolesResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="addRoles">
+    <xs:sequence>
+      <xs:element name="roles" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="addRolesResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="addUser">
+    <xs:sequence>
+      <xs:element name="users" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="addUserResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="addDevice">
+    <xs:sequence>
+      <xs:element name="devices" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="addDeviceResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="updateDevices">
+    <xs:sequence>
+      <xs:element name="devices" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="updateDevicesResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+

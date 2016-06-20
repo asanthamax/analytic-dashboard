@@ -1,24 +1,32 @@
 package org.spring.ws;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.spring.models.Users;
 import org.spring.service.*;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
+import java.util.*;
 
 /**
  * Created by asantha on 6/15/16.
  */
-
-@WebService(endpointInterface = "org.spring.ws.IWebservice")
-@SOAPBinding(style = SOAPBinding.Style.DOCUMENT, use= SOAPBinding.Use.LITERAL)
-public class Webservice implements IWebservice{
+@Service
+@WebService(serviceName = "WebserviceService",endpointInterface = "org.spring.ws.IWebservice",portName = "WebservicePort",targetNamespace = "http://ws.spring.org")
+public class Webservice implements IWebservice {
 
     @Autowired
-    private UsersService usersService ;
+    private UsersService usersService;
 
     @Autowired
     private ClaimsService claimsService;
@@ -32,67 +40,115 @@ public class Webservice implements IWebservice{
     @Autowired
     private RolesService rolesService;
 
-    public Webservice(){
+    /*public Webservice(){
 
+
+    }*/
+
+    @Override
+    public boolean addUser(String[] users) throws WebserviceException{
+
+        try {
+
+            for (String user : users) {
+
+                JSONObject userObject = new JSONObject(user);
+                Map<String,Object> map = toMap(userObject);
+                BeanWrapper wrapper = new BeanWrapperImpl(Users.class);
+                wrapper.setPropertyValues(map);
+                Users userDBObject = (Users) wrapper.getWrappedInstance();
+                usersService.addUser(userDBObject);
+            }
+            return true;
+        }catch(Exception ex){
+
+            Throwable t = ex;
+            throw new WebserviceException("JSON Parse Error occurred",t);
+        }
     }
 
     @Override
-    public boolean addUser(String[] users){
+    public boolean updateUser(String[] users) throws WebserviceException{
 
         return false;
     }
 
     @Override
-    public boolean updateUser(String[] users){
+    public boolean addDevice(String[] devices) throws WebserviceException{
 
         return false;
     }
 
     @Override
-    public boolean addDevice(String[] devices){
+    public boolean updateDevice(String[] devices) throws WebserviceException{
 
         return false;
     }
 
     @Override
-    public boolean updateDevice(String[] devices){
+    public boolean addFrauds(String[] frauds) throws WebserviceException{
 
         return false;
     }
 
     @Override
-    public boolean addFrauds(String[] frauds){
+    public boolean updateFrauds(String[] frauds) throws WebserviceException{
 
         return false;
     }
 
     @Override
-    public boolean updateFrauds(String[] frauds){
+    public boolean addRoles(String[] roles) throws WebserviceException{
 
         return false;
     }
 
     @Override
-    public boolean addRoles(String[] roles){
+    public boolean updateRoles(String[] roles) throws WebserviceException{
 
         return false;
     }
 
     @Override
-    public boolean updateRoles(String[] roles){
+    public boolean addUsers(String[] users) throws WebserviceException{
 
         return false;
     }
 
-    @Override
-    public boolean addUsers(String[] users){
+    private static Map<String, Object> toMap(JSONObject object) throws JSONException {
+        Map<String, Object> map = new HashMap<String, Object>();
 
-        return false;
+        Iterator<String> keysItr = object.keys();
+        while(keysItr.hasNext()) {
+            String key = keysItr.next();
+            Object value = object.get(key);
+
+            if(value instanceof JSONArray) {
+                value = toList((JSONArray) value);
+            }
+
+            else if(value instanceof JSONObject) {
+                value = toMap((JSONObject) value);
+            }
+            map.put(key, value);
+        }
+        return map;
     }
 
-    @Override
-    public boolean updateUsers(String[] users){
+    private static List<Object> toList(JSONArray array) throws JSONException {
+        List<Object> list = new ArrayList<Object>();
+        for(int i = 0; i < array.length(); i++) {
+            Object value = array.get(i);
+            if(value instanceof JSONArray) {
+                value = toList((JSONArray) value);
+            }
 
-        return false;
+            else if(value instanceof JSONObject) {
+                value = toMap((JSONObject) value);
+            }
+            list.add(value);
+        }
+        return list;
     }
+
 }

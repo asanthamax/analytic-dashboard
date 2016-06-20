@@ -2,18 +2,12 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
-       xmlns:ws="http://jax-ws.dev.java.net/spring/core"
-       xmlns:wss="http://jax-ws.dev.java.net/spring/servlet"
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/data/mongo
 	http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
 	http://www.springframework.org/schema/aop 
-	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
-	http://jax-ws.dev.java.net/spring/core
-    http://jax-ws.dev.java.net/spring/core.xsd
-    http://jax-ws.dev.java.net/spring/servlet
-    http://jax-ws.dev.java.net/spring/servlet.xsd">
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
 
 	<mongo:mongo id="mongo" host="localhost" port="27017"  />
@@ -21,18 +15,14 @@
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
         <constructor-arg ref="mongoDbFactory"/>
 	</bean>
-    <bean class="org.springframework.remoting.jaxws.SimpleJaxWsServiceExporter">
-        <property name="baseAddress" value="http://localhost:8989/services"/>
-    </bean>
-    <bean id="identityService" class="org.spring.ws.Webservice"/>
 
-    <bean id="identityWebService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+    <!--<bean id="identityWebService" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
         <property name="serviceInterface" value="org.spring.ws.IWebservice"/>
-        <property name="wsdlDocumentUrl" value="http://localhost:8989/services/Webservice?WSDL"/>
+        <property name="wsdlDocumentUrl" value="http://localhost:8080/resources/WebserviceService.wsdl"/>
         <property name="namespaceUri" value="http://ws.spring.org/"/>
         <property name="serviceName" value="WebserviceService"/>
         <property name="portName" value="WebservicePort"/>
-    </bean>
+    </bean>-->
   	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="host" value="smtp.gmail.com" />
         <property name="port" value="587" />
@@ -46,5 +36,4 @@
             </props>
         </property>
     </bean>
-
 </beans>
