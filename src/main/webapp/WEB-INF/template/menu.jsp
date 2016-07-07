@@ -62,6 +62,12 @@
 					<span>Graphical Analytic</span>
 				</a>
 			</li>
+			<li>
+				<a class="" href="${home}/getNN">
+					<i class="icon-eye-open"></i>
+					<span>Neural Network</span>
+				</a>
+			</li>
 			<!-- <li class="sub-menu">
                 <a href="javascript:;" class="">
                     <i class="icon_table"></i>

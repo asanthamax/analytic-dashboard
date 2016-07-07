@@ -1,0 +1,9 @@
+canova.input.header.skip=false
+canova.input.statistics.debug.print=false
+canova.input.format=org.canova.api.formats.input.impl.LineInputFormat
+
+canova.input.directory=src/main/resources/data.txt
+canova.input.vector.schema=src/main/resources/dataschema.txt
+canova.output.directory=/src/main/resources/vectordata.txt
+
+va.output.format=org.canova.api.formats.output.impl.SVMLightOutputFormatcano

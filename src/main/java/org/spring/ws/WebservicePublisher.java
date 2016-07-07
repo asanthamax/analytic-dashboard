@@ -1,3 +1,4 @@
+
 package org.spring.ws;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import javax.xml.ws.Endpoint;
 /**
  * Created by asantha on 6/19/16.
  */
+
 @Component
 public class WebservicePublisher implements ServletContextListener{
 
@@ -30,3 +32,4 @@ public class WebservicePublisher implements ServletContextListener{
 
     }
 }
+

@@ -35,6 +35,13 @@
 	<link href="${pageContext.request.contextPath}/resources/css/style-responsive.css" rel="stylesheet" />
 	<link href="${pageContext.request.contextPath}/resources/css/xcharts.min.css" rel=" stylesheet">
 	<link href="${pageContext.request.contextPath}/resources/css/jquery-ui-1.10.4.min.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/css/dropzone.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="//blueimp.github.io/Gallery/css/blueimp-gallery.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/jquery.fileupload-ui.css">
+    <!-- CSS adjustments for browsers with JavaScript disabled -->
+    <noscript><link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/jquery.fileupload-noscript.css"></noscript>
+    <noscript><link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/jquery.fileupload-ui-noscript.css"></noscript>
     <!-- Custom styles -->
     <link href="${pageContext.request.contextPath}/resources/css/style.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/resources/css/style-responsive.css" rel="stylesheet" />
@@ -44,6 +51,7 @@
     <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery-ui-1.9.2.custom.min.js"></script>
     <!-- bootstrap -->
     <script src="${pageContext.request.contextPath}/resources/js/bootstrap.min.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/js/dropzone.js"></script>
 <style>
    .dev-page{visibility: hidden;}            
 </style>
@@ -92,6 +100,29 @@
    <script src="${pageContext.request.contextPath}/resources/js/sparklines.js"></script>
    <script src="${pageContext.request.contextPath}/resources/js/charts.js"></script>
    <script src="${pageContext.request.contextPath}/resources/js/jquery.slimscroll.min.js"></script>
+    <script src="//blueimp.github.io/JavaScript-Load-Image/js/load-image.all.min.js"></script>
+    <!-- The Canvas to Blob plugin is included for image resizing functionality -->
+    <script src="//blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js"></script>
+    <!-- Bootstrap JS is not required, but included for the responsive demo navigation -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <!-- blueimp Gallery script -->
+    <script src="//blueimp.github.io/Gallery/js/jquery.blueimp-gallery.min.js"></script>
+    <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+    <script src="${pageContext.request.contextPath}/resources/js/jquery.iframe-transport.js"></script>
+    <!-- The basic File Upload plugin -->
+    <script src="${pageContext.request.contextPath}/resources/js/jquery.fileupload.js"></script>
+    <!-- The File Upload processing plugin -->
+    <script src="${pageContext.request.contextPath}/resources/js/jquery.fileupload-process.js"></script>
+    <!-- The File Upload image preview & resize plugin -->
+    <script src="${pageContext.request.contextPath}/resources/js/jquery.fileupload-image.js"></script>
+    <!-- The File Upload audio preview plugin -->
+    <script src="${pageContext.request.contextPath}/resources/js/jquery.fileupload-audio.js"></script>
+    <!-- The File Upload video preview plugin -->
+    <script src="${pageContext.request.contextPath}/resources/js/jquery.fileupload-video.js"></script>
+    <!-- The File Upload validation plugin -->
+    <script src="${pageContext.request.contextPath}/resources/js/jquery.fileupload-validate.js"></script>
+    <!-- The File Upload user interface plugin -->
+    <script src="${pageContext.request.contextPath}/resources/js/jquery.fileupload-jquery-ui.js"></script>
    <script>
 
        //knob

@@ -1,3 +1,4 @@
+
 package org.spring.ws;
 
 import org.json.JSONArray;
@@ -18,9 +19,11 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import javax.jws.WebService;
 import java.util.*;
 
+
 /**
  * Created by asantha on 6/15/16.
  */
+
 @Service
 @WebService(serviceName = "WebserviceService",endpointInterface = "org.spring.ws.IWebservice",portName = "WebservicePort",targetNamespace = "http://ws.spring.org")
 public class Webservice implements IWebservice {
@@ -40,10 +43,12 @@ public class Webservice implements IWebservice {
     @Autowired
     private RolesService rolesService;
 
-    /*public Webservice(){
+
+    public Webservice(){
 
 
-    }*/
+    }
+
 
     @Override
     public boolean addUser(String[] users) throws WebserviceException{
@@ -152,3 +157,4 @@ public class Webservice implements IWebservice {
     }
 
 }
+

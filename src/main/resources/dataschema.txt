@@ -1,0 +1,7 @@
+@RELATION FraudDataset
+@DELIMITER ,
+
+   @ATTRIBUTE userid         NUMERIC   !NORMALIZE
+   @ATTRIBUTE loginip        NUMERIC   !NORMALIZE
+   @ATTRIBUTE logindatetime  NUMERIC   !NORMALIZE
+   @ATTRIBUTE status         NOMINAL   !LABEL
