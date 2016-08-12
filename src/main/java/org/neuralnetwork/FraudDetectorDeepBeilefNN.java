@@ -1,26 +1,38 @@
 package org.neuralnetwork;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.spark.api.java.JavaRDD;
 import org.canova.api.records.reader.RecordReader;
 import org.canova.api.records.reader.impl.CSVRecordReader;
+import org.canova.api.split.FileSplit;
+import org.deeplearning4j.datasets.canova.RecordReaderDataSetIterator;
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
-import org.deeplearning4j.nn.conf.layers.OutputLayer;
-import org.deeplearning4j.nn.conf.layers.RBM;
+import org.deeplearning4j.nn.conf.Updater;
+import org.deeplearning4j.nn.conf.layers.*;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.api.IterationListener;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
+import org.deeplearning4j.spark.api.Repartition;
+import org.deeplearning4j.spark.api.RepartitionStrategy;
+import org.deeplearning4j.spark.api.stats.SparkTrainingStats;
 import org.deeplearning4j.spark.impl.multilayer.SparkDl4jMultiLayer;
+import org.deeplearning4j.spark.impl.paramavg.ParameterAveragingTrainingMaster;
+import org.deeplearning4j.spark.stats.StatsUtils;
+import org.deeplearning4j.util.ModelSerializer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.DataSet;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
+import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
@@ -30,18 +42,13 @@ import java.util.Collections;
 public class FraudDetectorDeepBeilefNN {
 
     private static final Log log = LogFactory.getLog(FraudDetectorNeuralNet.class);
-    private int nChannels = 1;
     private int outputNum = 3;
-    private int batchSize = 64;
-    private int numSamples = 60000;
-    private int nEpochs = 10;
-    private int iterations = 1;
-    private int seed = 123;
-    private DataSetIterator minTrainSet;
+    private int iterations = 4;
+    private int seed = 1234;
     private MultiLayerNetwork model = null;
-    private int numRows = 1;
-    private int numColumns = 38;
-    private int listenerFreq = iterations / 5;
+    private int HIDDEN_LAYER_COUNT = 4;
+    private int numHiddenNodes = 20;
+    private String uploadDirectory;
 
     public FraudDetectorDeepBeilefNN(){
 
@@ -51,60 +58,126 @@ public class FraudDetectorDeepBeilefNN {
     public void buildModel(){
 
         log.info("Build model....");
-        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
-                .seed(seed)
-                .iterations(iterations)
-                .optimizationAlgo(OptimizationAlgorithm.LINE_GRADIENT_DESCENT)
-                .list()
-                .layer(0, new RBM.Builder().nIn(numRows*numColumns).nOut(100)
-                        .lossFunction(LossFunction.RMSE_XENT)
-                        .build())
-                .layer(1, new RBM.Builder().nIn(100).nOut(50)
-                        .lossFunction(LossFunction.RMSE_XENT)
-                        .build())
-                .layer(2, new RBM.Builder().nIn(50).nOut(20)
-                        .lossFunction(LossFunction.RMSE_XENT)
-                        .build())
-                .layer(3, new RBM.Builder().nIn(20).nOut(10)
-                        .lossFunction(LossFunction.RMSE_XENT)
-                        .build())
-                .layer(4, new RBM.Builder().nIn(10).nOut(3)
-                        .lossFunction(LossFunction.RMSE_XENT)
-                        .build())
-                .layer(5, new RBM.Builder().nIn(3).nOut(10)
-                        .lossFunction(LossFunction.RMSE_XENT)
-                        .build())
-                .layer(6, new RBM.Builder().nIn(10).nOut(20)
-                        .lossFunction(LossFunction.RMSE_XENT)
-                        .build())
-                .layer(7, new RBM.Builder().nIn(20).nOut(50)
-                        .lossFunction(LossFunction.RMSE_XENT)
-                        .build())
-                .layer(8, new RBM.Builder().nIn(50).nOut(100)
-                        .lossFunction(LossFunction.RMSE_XENT)
-                        .build())
-                .layer(9, new OutputLayer.Builder(LossFunction.RMSE_XENT).activation("softmax")
-                        .nIn(100).nOut(numRows*numColumns).build())
-                .pretrain(true).backprop(true)
-                .build();
+        NeuralNetConfiguration.Builder builder = new NeuralNetConfiguration.Builder();
+        builder.iterations(iterations);
+        builder.learningRate(0.001);
+       // builder.momentum(0.01);
+        builder.optimizationAlgo(OptimizationAlgorithm.CONJUGATE_GRADIENT);
+        builder.seed(seed);
+        builder.biasInit(1);
+        builder.regularization(true).l2(1e-5);
+        builder.updater(Updater.RMSPROP);
+        builder.weightInit(WeightInit.RELU);
+        NeuralNetConfiguration.ListBuilder list = builder.list();
 
-        model = new MultiLayerNetwork(conf);
+        for(int i=0;i<HIDDEN_LAYER_COUNT;i++){
+
+            GravesBidirectionalLSTM.Builder hiddenLayerBuilder = new GravesBidirectionalLSTM.Builder();
+            hiddenLayerBuilder.nIn(i==0 ? 4 : numHiddenNodes);
+            hiddenLayerBuilder.nOut(numHiddenNodes);
+            hiddenLayerBuilder.activation("relu");
+            list.layer(i,hiddenLayerBuilder.build());
+        }
+
+        RnnOutputLayer.Builder outputLayer = new RnnOutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD);
+        outputLayer.activation("softmax");
+        outputLayer.nIn(numHiddenNodes);
+        outputLayer.nOut(2);
+        list.layer(HIDDEN_LAYER_COUNT,outputLayer.build());
+        list.pretrain(false);
+        list.backprop(true);
+        MultiLayerConfiguration configuration = list.build();
+        model = new MultiLayerNetwork(configuration);
         model.init();
+        model.setListeners(new ScoreIterationListener(1));
+
     }
 
-    public void trainModel() throws IOException {
+    public String trainModel(/*String neural_model, JavaRDD<org.nd4j.linalg.dataset.DataSet> rddDataSet, SparkDataSet sparkDataSet*/) throws NeuralException {
 
-        RecordReader recordReader = new CSVRecordReader(0,",");
-        SparkDataSet sparkDataSet = SparkDataSet.getInstance("fraud_data","local[*]",38,3);
-        JavaRDD<org.nd4j.linalg.dataset.DataSet> rddDataSet = sparkDataSet.generateTrainingDataset("hdfs://localhost:9000/user/asantha/fraud_data/fraud_dataset.csv");
-        log.info("Train model...");
-        if(model== null){
+        try {
+            SparkDataSet sparkDataSet = SparkDataSet.getInstance("fraud_data","local[*]",0,2);
+            JavaRDD<org.nd4j.linalg.dataset.DataSet> rddDataSet = sparkDataSet.generateTrainingDataset("datasample.csv");
+            log.info("Training model...");
+          //  loadSaveNN(neural_model,false);
+            if(model== null){
 
-            buildModel();
+                buildModel();
+            }
+            //setup the spark training
+            ParameterAveragingTrainingMaster tm = new ParameterAveragingTrainingMaster.Builder(1)
+                    .workerPrefetchNumBatches(2) //Asynchronusly prefetch upto 2 batches
+                    .saveUpdater(true)
+                    .repartionData(Repartition.Always)
+                    .repartitionStrategy(RepartitionStrategy.Balanced)
+                    .batchSizePerWorker(8) //number of examples that each worket gets,per fit operation
+                    .build();
+            SparkDl4jMultiLayer network = new SparkDl4jMultiLayer(sparkDataSet.getSc(),model,tm);
+            network.setCollectTrainingStats(true);
+            int nEpochs = 50;
+            for(int i=0;i<nEpochs;i++){
+
+                model = network.fit(rddDataSet);
+            }
+            SparkTrainingStats stats = network.getSparkTrainingStats();
+            StatsUtils.exportStatsAsHtml(stats,"SparkTrainingStatus.html",sparkDataSet.getSc());
+            Evaluation evaluation = network.evaluate(rddDataSet);
+            String statMsg = evaluation.stats();
+            log.info(statMsg);
+            //loadSaveNN(neural_model,true);
+            return statMsg;
+
+        } catch (Exception e) {
+
+            log.error("Error ocuured while building neural netowrk :"+e.getMessage());
+            throw new NeuralException(e.getLocalizedMessage(),e);
         }
-        model.setListeners(Collections.singletonList((IterationListener) new ScoreIterationListener(listenerFreq)));
-        SparkDl4jMultiLayer network = new SparkDl4jMultiLayer(sparkDataSet.getSc(),model);
-        network.fitDataSet(rddDataSet);
+    }
+
+    private void loadSaveNN(String name,boolean save){
+
+
+        File directory = new File(uploadDirectory);
+        File[] allNN = directory.listFiles();
+        boolean status = false;
+        try {
+
+            if(model == null && save){
+
+                buildModel();
+            }
+            if(allNN != null && allNN.length > 0) {
+                for (File NN : allNN) {
+
+                    String fnme = FilenameUtils.removeExtension(NN.getName());
+                    if (NN.getName().equals(fnme)) {
+
+                        status = true;
+                        if (save) {
+
+                            ModelSerializer.writeModel(model,NN,true);
+
+                        } else {
+
+                            model = ModelSerializer.restoreMultiLayerNetwork(NN);
+                        }
+                        break;
+                    }
+                }
+            }
+            if(!status && save){
+
+                //File tempFIle = File.createTempFile(name,".zip",directory);
+                File tempFile = new File(directory.getAbsolutePath()+"/"+name+".zip");
+                if(!tempFile.exists()){
+
+                    tempFile.createNewFile();
+                }
+                ModelSerializer.writeModel(model,tempFile,true);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void testModel() throws IOException{
@@ -112,7 +185,7 @@ public class FraudDetectorDeepBeilefNN {
         if(model == null){
 
             buildModel();
-            trainModel();
+           // trainModel();
         }
         log.info("Evaluate model....");
         Evaluation eval = new Evaluation(outputNum);
@@ -129,12 +202,20 @@ public class FraudDetectorDeepBeilefNN {
 
     }
 
+    public void setUploadDirectory(String uploadDirectory) {
+
+        this.uploadDirectory = uploadDirectory;
+
+    }
+
     public static void main(String[] args) {
 
         FraudDetectorDeepBeilefNN neural_network = new FraudDetectorDeepBeilefNN();
         try {
-            neural_network.testModel();
-        } catch (IOException e) {
+            neural_network.buildModel();
+            String output = neural_network.trainModel();
+            System.out.println(output);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
